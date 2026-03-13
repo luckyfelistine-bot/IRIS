@@ -1,0 +1,45 @@
+# IRIS v7.0 SECURE - Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core Flask & Security
+Flask>=3.0.0
+Flask-CORS>=4.0.0
+Flask-WTF>=1.2.0
+python-dotenv>=1.0.0
+Werkzeug>=3.0.0
+bleach>=6.0.0                    # For HTML sanitization
+
+# Database & Scheduling
+APScheduler>=3.10.0
+
+# AI & Language Models
+groq>=0.9.0                       # Groq API client
+transformers>=4.30.0              # For summarization & sentiment analysis
+torch>=2.0.0                       # Required by transformers (large, optional)
+stanza>=1.6.0                      # Optional NER (fallback if spacy fails)
+spacy>=3.7.0                        # Optional NER (may have Python 3.14 issues)
+deep-translator>=1.11.0            # For document translation
+
+# Document Processing
+pdfplumber>=0.10.0                 # PDF text extraction
+pytesseract>=0.3.10                 # OCR (requires Tesseract system install)
+Pillow>=10.0.0                      # Image processing for OCR & thumbnails
+pdf2image>=1.16.0                   # Convert PDF pages to images for OCR
+PyPDF2>=3.0.0                       # Fallback PDF extraction
+python-magic-bin>=0.4.14            # MIME type detection (Windows binary)
+# For Linux/macOS use: python-magic>=0.4.27
+
+# Voice
+edge-tts>=6.1.0                     # Text-to-speech (optional)
+# For speech recognition you may need additional packages (e.g., SpeechRecognition, pyaudio)
+
+# System Monitoring & Automation
+psutil>=5.9.0                       # System stats (optional)
+pyautogui>=0.9.54                   # Screenshots, system control (optional)
+
+# Data Visualization
+matplotlib>=3.8.0                   # Chart generation (optional)
+numpy>=1.24.0                       # Numerical operations (optional)
+
+# Utilities
+requests>=2.31.0
