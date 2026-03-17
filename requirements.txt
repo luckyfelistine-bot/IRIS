@@ -26,7 +26,7 @@ pytesseract>=0.3.10                 # OCR (requires Tesseract system install)
 Pillow>=10.0.0                      # Image processing for OCR & thumbnails
 pdf2image>=1.16.0                   # Convert PDF pages to images for OCR
 PyPDF2>=3.0.0                       # Fallback PDF extraction
-python-magic-bin>=0.4.14            # MIME type detection (Windows binary)
+python-magic>=0.4.27            # MIME type detection (Windows binary)
 # For Linux/macOS use: python-magic>=0.4.27
 
 # Voice
