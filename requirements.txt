@@ -46,3 +46,5 @@ gunicorn
 
 # Utilities
 requests>=2.31.0
+
+chess
