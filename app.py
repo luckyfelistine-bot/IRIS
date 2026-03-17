@@ -104,10 +104,9 @@ except ImportError:
 try:
     import pyautogui
     PYAUTOGUI_AVAILABLE = True
-except ImportError:
+except Exception as e:
     PYAUTOGUI_AVAILABLE = False
-    print("⚠️  pyautogui not available. System control features disabled.")
-
+    print(f"⚠️  pyautogui not available: {e}. System control features disabled.")
 try:
     import matplotlib
     matplotlib.use('Agg')
