@@ -41,5 +41,8 @@ pyautogui>=0.9.54                   # Screenshots, system control (optional)
 matplotlib>=3.8.0                   # Chart generation (optional)
 numpy>=1.24.0                       # Numerical operations (optional)
 
+# Gunicorn (production server)
+gunicorn
+
 # Utilities
 requests>=2.31.0
