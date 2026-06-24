@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRIS — Infinite Vybeflix's Partner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a1a;
+            color: #e0e0ff;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container { display: flex; height: 100vh; }
+
+        .sidebar {
+            width: 280px;
+            background: #12122a;
+            border-right: 1px solid #1a1a3a;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #00ff88, #0088ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        .nav-item {
+            padding: 12px 16px;
+            margin: 4px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .nav-item:hover, .nav-item.active {
+            background: #1a1a3a;
+            color: #00ff88;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #1a1a3a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #00ff88;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .message {
+            max-width: 80%;
+            padding: 16px 20px;
+            border-radius: 16px;
+            line-height: 1.6;
+        }
+        .message.user {
+            align-self: flex-end;
+            background: #1a1a3a;
+            border-bottom-right-radius: 4px;
+        }
+        .message.assistant {
+            align-self: flex-start;
+            background: #12122a;
+            border: 1px solid #1a1a3a;
+            border-bottom-left-radius: 4px;
+        }
+        .message .meta {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        .thinking-box {
+            background: #0d1f1a;
+            border: 1px solid #00ff8833;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 8px 0;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: #1a1a3a;
+            border-radius: 2px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #0088ff);
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            border-top: 1px solid #1a1a3a;
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        .chat-input {
+            flex: 1;
+            background: #12122a;
+            border: 1px solid #1a1a3a;
+            border-radius: 12px;
+            padding: 14px 18px;
+            color: #e0e0ff;
+            font-size: 15px;
+            resize: none;
+            min-height: 52px;
+            max-height: 200px;
+        }
+        .chat-input:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+        .btn {
+            padding: 14px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #00ff88, #0088ff);
+            color: #0a0a1a;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,255,136,0.3);
+        }
+        .btn-icon {
+            width: 52px;
+            height: 52px;
+            padding: 0;
+            justify-content: center;
+            background: #12122a;
+            border: 1px solid #1a1a3a;
+            color: #00ff88;
+        }
+
+        .live-mode {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #0a0a1a;
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+        }
+        .live-mode.active { display: flex; }
+        .live-face {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .live-face iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .live-controls {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .auth-screen {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #0a0a1a;
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .auth-box {
+            background: #12122a;
+            border: 1px solid #1a1a3a;
+            border-radius: 20px;
+            padding: 48px;
+            width: 400px;
+            text-align: center;
+        }
+        .auth-box h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #00ff88, #0088ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .auth-box input {
+            width: 100%;
+            padding: 14px;
+            margin: 12px 0;
+            background: #0a0a1a;
+            border: 1px solid #1a1a3a;
+            border-radius: 12px;
+            color: #e0e0ff;
+            font-size: 16px;
+        }
+        .auth-box input:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+
+        .upload-zone {
+            border: 2px dashed #1a1a3a;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .upload-zone:hover {
+            border-color: #00ff88;
+            background: #0d1f1a;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-screen" id="authScreen">
+        <div class="auth-box">
+            <h1>IRIS</h1>
+            <p style="color: #666; margin-bottom: 24px;">Infinite Vybeflix's Partner</p>
+            <input type="password" id="passwordInput" placeholder="Enter password..." onkeypress="if(event.key==='Enter')authenticate()">
+            <button class="btn btn-primary" style="width: 100%; margin-top: 12px;" onclick="authenticate()">
+                Unlock
+            </button>
+            <p style="color: #444; font-size: 13px; margin-top: 16px;">
+                Or use your device fingerprint
+            </p>
+        </div>
+    </div>
+
+    <div class="live-mode" id="liveMode">
+        <div class="live-face">
+            <iframe id="faceFrame" src="/face"></iframe>
+        </div>
+        <div class="live-controls">
+            <button class="btn btn-icon" onclick="toggleLiveMode()">&#10005;</button>
+            <button class="btn btn-primary" onclick="startVoiceChat()">&#127908; Start Talking</button>
+        </div>
+    </div>
+
+    <div class="container" id="app" style="display: none;">
+        <aside class="sidebar">
+            <div class="logo">&#9670; IRIS</div>
+            <div class="nav-item active" onclick="switchTab('chat')">&#128172; Chat</div>
+            <div class="nav-item" onclick="switchTab('files')">&#128193; Documents</div>
+            <div class="nav-item" onclick="switchTab('chess')">&#9823; Chess</div>
+            <div class="nav-item" onclick="switchTab('memory')">&#129504; Memory</div>
+            <div class="nav-item" onclick="switchTab('settings')">&#9881; Settings</div>
+            <div class="nav-item" onclick="toggleLiveMode()" style="margin-top: auto; color: #00ff88;">&#128249; Live Mode</div>
+        </aside>
+
+        <main class="main">
+            <div class="chat-header">
+                <div>
+                    <h2>IRIS</h2>
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <span>Online — Ready to build</span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-icon" onclick="document.getElementById('fileInput').click()" title="Upload">&#128206;</button>
+                    <input type="file" id="fileInput" style="display: none;" onchange="uploadFile(this)" multiple>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message assistant">
+                    <div class="meta">IRIS — Just now</div>
+                    Hello Infinite! I'm IRIS, your software engineering partner. I'm ready to build, argue, think, and create with you. What are we working on today?
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <textarea class="chat-input" id="chatInput" placeholder="Ask me anything... (Shift+Enter for new line)" rows="1" onkeypress="handleKeyPress(event)"></textarea>
+                <button class="btn btn-primary" onclick="sendMessage()">&#10148;</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let sessionId = null;
+        let currentTab = 'chat';
+
+        async function authenticate() {
+            const password = document.getElementById('passwordInput').value;
+            const fingerprint = await getFingerprint();
+
+            const res = await fetch('/api/auth', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({password, fingerprint})
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                sessionId = data.session_id;
+                document.getElementById('authScreen').style.display = 'none';
+                document.getElementById('app').style.display = 'flex';
+            } else {
+                alert('Access denied');
+            }
+        }
+
+        async function getFingerprint() {
+            const components = [
+                navigator.userAgent,
+                navigator.language,
+                screen.width + 'x' + screen.height,
+                new Date().getTimezoneOffset()
+            ];
+            return btoa(components.join('|'));
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            input.value = '';
+            addMessage('user', text);
+
+            const thinkingId = 'thinking-' + Date.now();
+            addThinking(thinkingId, 'IRIS is thinking...');
+
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Session-ID': sessionId
+                },
+                body: JSON.stringify({message: text})
+            });
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+
+            while (true) {
+                const {done, value} = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, {stream: true});
+                const lines = buffer.split('
+');
+                buffer = lines.pop();
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const data = line.slice(6);
+                        if (data === '[DONE]') continue;
+                        try {
+                            const update = JSON.parse(data);
+                            updateThinking(thinkingId, update);
+                        } catch (e) {}
+                    }
+                }
+            }
+        }
+
+        function addMessage(role, text) {
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = 'message ' + role;
+            div.innerHTML = '<div class="meta">' + (role === 'user' ? 'You' : 'IRIS') + ' — ' + new Date().toLocaleTimeString() + '</div>' + escapeHtml(text);
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addThinking(id, text) {
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.id = id;
+            div.className = 'message assistant';
+            div.innerHTML = '<div class="meta">IRIS — Thinking</div><div class="thinking-box"><div>' + text + '</div><div class="progress-bar"><div class="progress-fill" style="width: 0%"></div></div></div>';
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function updateThinking(id, update) {
+            const el = document.getElementById(id);
+            if (!el) return;
+
+            if (update.final) {
+                el.innerHTML = '<div class="meta">IRIS — ' + new Date().toLocaleTimeString() + '</div>' + escapeHtml(update.message);
+                el.className = 'message assistant';
+                return;
+            }
+
+            const progress = el.querySelector('.progress-fill');
+            const text = el.querySelector('.thinking-box div');
+            if (progress) progress.style.width = update.progress + '%';
+            if (text) text.textContent = update.message;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function uploadFile(input) {
+            for (const file of input.files) {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                addMessage('assistant', '&#128193; Processing ' + file.name + '...');
+
+                const res = await fetch('/api/upload', {
+                    method: 'POST',
+                    headers: {'X-Session-ID': sessionId},
+                    body: formData
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    addMessage('assistant', '&#9989; Uploaded ' + file.name + ' (' + data.file_type + '). ' + data.chunks + ' chunks indexed.');
+                } else {
+                    addMessage('assistant', '&#10060; Failed to process ' + file.name + ': ' + data.error);
+                }
+            }
+        }
+
+        function toggleLiveMode() {
+            const live = document.getElementById('liveMode');
+            live.classList.toggle('active');
+            if (live.classList.contains('active')) {
+                document.getElementById('faceFrame').contentWindow.postMessage({emotion: 'happy'}, '*');
+            }
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        document.getElementById('chatInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+        });
+    </script>
+</body>
+</html>
