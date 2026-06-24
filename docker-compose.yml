@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  iris:
+    build: .
+    ports:
+      - "5000:5000"
+      - "8765:8765"
+    environment:
+      - FLASK_ENV=production
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY}
+      - AEVIBRON_BASE_URL=${AEVIBRON_BASE_URL}
+      - AEVIBRON_API_KEY=${AEVIBRON_API_KEY}
+      - AEVIBRON_ACCESS_TOKEN=${AEVIBRON_ACCESS_TOKEN}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - VERCEL_TOKEN=${VERCEL_TOKEN}
+    volumes:
+      - ./data:/app/data
+      - ./skills:/app/skills
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
