@@ -1,4 +1,4 @@
-"""IRIS v7 Database Layer"""
+"""IRIS v7 Database Layer — SQLite with migrations"""
 import sqlite3
 import os
 import json
@@ -21,7 +21,8 @@ class Database:
         conn = self.get_connection()
         cursor = conn.cursor()
 
-        cursor.execute("""
+        # Conversations
+        cursor.execute('''
             CREATE TABLE IF NOT EXISTS conversations (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 session_id TEXT NOT NULL,
@@ -31,9 +32,10 @@ class Database:
                 reasoning TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-        """)
+        ''')
 
-        cursor.execute("""
+        # Tasks (Agent work queue)
+        cursor.execute('''
             CREATE TABLE IF NOT EXISTS tasks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 task_id TEXT UNIQUE NOT NULL,
@@ -48,9 +50,10 @@ class Database:
                 completed_at TIMESTAMP,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-        """)
+        ''')
 
-        cursor.execute("""
+        # Memory (Facts about owner + world)
+        cursor.execute('''
             CREATE TABLE IF NOT EXISTS memory (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 key TEXT UNIQUE NOT NULL,
@@ -61,9 +64,10 @@ class Database:
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-        """)
+        ''')
 
-        cursor.execute("""
+        # Episodic Memory (What happened)
+        cursor.execute('''
             CREATE TABLE IF NOT EXISTS episodic_memory (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 event TEXT NOT NULL,
@@ -72,9 +76,10 @@ class Database:
                 lesson TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-        """)
+        ''')
 
-        cursor.execute("""
+        # Documents (Uploaded files)
+        cursor.execute('''
             CREATE TABLE IF NOT EXISTS documents (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 filename TEXT NOT NULL,
@@ -88,9 +93,10 @@ class Database:
                 tags TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-        """)
+        ''')
 
-        cursor.execute("""
+        # Code Projects (Git repos IRIS manages)
+        cursor.execute('''
             CREATE TABLE IF NOT EXISTS code_projects (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
@@ -103,9 +109,10 @@ class Database:
                 vercel_url TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-        """)
+        ''')
 
-        cursor.execute("""
+        # Skills (Tools IRIS has learned)
+        cursor.execute('''
             CREATE TABLE IF NOT EXISTS skills (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT UNIQUE NOT NULL,
@@ -116,9 +123,10 @@ class Database:
                 is_active INTEGER DEFAULT 1,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-        """)
+        ''')
 
-        cursor.execute("""
+        # Agent Logs (Self-diagnosis)
+        cursor.execute('''
             CREATE TABLE IF NOT EXISTS agent_logs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 level TEXT NOT NULL,
@@ -128,9 +136,10 @@ class Database:
                 resolved INTEGER DEFAULT 0,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-        """)
+        ''')
 
-        cursor.execute("""
+        # Owner Profile
+        cursor.execute('''
             CREATE TABLE IF NOT EXISTS owner_profile (
                 id INTEGER PRIMARY KEY CHECK (id = 1),
                 name TEXT DEFAULT 'Infinite Vybeflix',
@@ -143,33 +152,47 @@ class Database:
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
-        """)
+        ''')
 
+        # Initialize owner profile if empty
         cursor.execute("SELECT COUNT(*) FROM owner_profile")
         if cursor.fetchone()[0] == 0:
-            cursor.execute("INSERT INTO owner_profile (id, name, aliases, preferences) VALUES (1, 'Infinite Vybeflix', 'Infinite, Vybeflix', '{}')")
+            cursor.execute('''
+                INSERT INTO owner_profile (id, name, aliases, preferences)
+                VALUES (1, 'Infinite Vybeflix', 'Infinite, Vybeflix', '{}')
+            ''')
 
         conn.commit()
         conn.close()
 
+    # === Conversation Methods ===
     def save_message(self, session_id, role, content, tool_calls=None, reasoning=None):
         conn = self.get_connection()
-        conn.execute("INSERT INTO conversations (session_id, role, content, tool_calls, reasoning) VALUES (?, ?, ?, ?, ?)",
-                    (session_id, role, content, json.dumps(tool_calls) if tool_calls else None, reasoning))
+        conn.execute('''
+            INSERT INTO conversations (session_id, role, content, tool_calls, reasoning)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (session_id, role, content, json.dumps(tool_calls) if tool_calls else None, reasoning))
         conn.commit()
         conn.close()
 
     def get_conversation(self, session_id, limit=50):
         conn = self.get_connection()
-        cursor = conn.execute("SELECT role, content, tool_calls, reasoning, created_at FROM conversations WHERE session_id = ? ORDER BY created_at DESC LIMIT ?", (session_id, limit))
+        cursor = conn.execute('''
+            SELECT role, content, tool_calls, reasoning, created_at
+            FROM conversations WHERE session_id = ?
+            ORDER BY created_at DESC LIMIT ?
+        ''', (session_id, limit))
         rows = cursor.fetchall()
         conn.close()
         return [dict(r) for r in rows]
 
+    # === Task Methods ===
     def create_task(self, task_id, description, priority=5, estimated_duration=None):
         conn = self.get_connection()
-        conn.execute("INSERT INTO tasks (task_id, description, priority, estimated_duration, status) VALUES (?, ?, ?, ?, 'pending')",
-                    (task_id, description, priority, estimated_duration))
+        conn.execute('''
+            INSERT INTO tasks (task_id, description, priority, estimated_duration, status)
+            VALUES (?, ?, ?, ?, 'pending')
+        ''', (task_id, description, priority, estimated_duration))
         conn.commit()
         conn.close()
 
@@ -206,10 +229,17 @@ class Database:
         conn.close()
         return dict(row) if row else None
 
+    # === Memory Methods ===
     def save_memory(self, key, value, category="general", importance=5, source=None):
         conn = self.get_connection()
-        conn.execute("INSERT INTO memory (key, value, category, importance, source) VALUES (?, ?, ?, ?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value, importance = excluded.importance, updated_at = CURRENT_TIMESTAMP",
-                    (key, value, category, importance, source))
+        conn.execute('''
+            INSERT INTO memory (key, value, category, importance, source)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(key) DO UPDATE SET
+                value = excluded.value,
+                importance = excluded.importance,
+                updated_at = CURRENT_TIMESTAMP
+        ''', (key, value, category, importance, source))
         conn.commit()
         conn.close()
 
@@ -234,23 +264,32 @@ class Database:
         conn.close()
         return [dict(r) for r in rows]
 
+    # === Episodic Memory ===
     def save_episode(self, event, context=None, emotion=None, lesson=None):
         conn = self.get_connection()
-        conn.execute("INSERT INTO episodic_memory (event, context, emotion, lesson) VALUES (?, ?, ?, ?)", (event, context, emotion, lesson))
+        conn.execute('''
+            INSERT INTO episodic_memory (event, context, emotion, lesson)
+            VALUES (?, ?, ?, ?)
+        ''', (event, context, emotion, lesson))
         conn.commit()
         conn.close()
 
     def get_episodes(self, limit=20):
         conn = self.get_connection()
-        cursor = conn.execute("SELECT * FROM episodic_memory ORDER BY created_at DESC LIMIT ?", (limit,))
+        cursor = conn.execute('''
+            SELECT * FROM episodic_memory ORDER BY created_at DESC LIMIT ?
+        ''', (limit,))
         rows = cursor.fetchall()
         conn.close()
         return [dict(r) for r in rows]
 
+    # === Document Methods ===
     def save_document(self, filename, original_name, file_type, file_size, content, summary=None, chunks=None, tags=None):
         conn = self.get_connection()
-        conn.execute("INSERT INTO documents (filename, original_name, file_type, file_size, content, summary, chunks, tags) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                    (filename, original_name, file_type, file_size, content, summary, json.dumps(chunks) if chunks else None, tags))
+        conn.execute('''
+            INSERT INTO documents (filename, original_name, file_type, file_size, content, summary, chunks, tags)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (filename, original_name, file_type, file_size, content, summary, json.dumps(chunks) if chunks else None, tags))
         conn.commit()
         conn.close()
 
@@ -263,12 +302,15 @@ class Database:
 
     def search_documents(self, query, limit=10):
         conn = self.get_connection()
-        cursor = conn.execute("SELECT * FROM documents WHERE content LIKE ? OR summary LIKE ? OR tags LIKE ? ORDER BY created_at DESC LIMIT ?",
-                             (f"%{query}%", f"%{query}%", f"%{query}%", limit))
+        cursor = conn.execute('''
+            SELECT * FROM documents WHERE content LIKE ? OR summary LIKE ? OR tags LIKE ?
+            ORDER BY created_at DESC LIMIT ?
+        ''', (f"%{query}%", f"%{query}%", f"%{query}%", limit))
         rows = cursor.fetchall()
         conn.close()
         return [dict(r) for r in rows]
 
+    # === Owner Profile ===
     def update_owner(self, **kwargs):
         conn = self.get_connection()
         allowed = ["name", "aliases", "preferences", "personality_notes", "tech_stack_prefs", "project_history", "secrets"]
@@ -291,9 +333,13 @@ class Database:
         conn.close()
         return dict(row) if row else None
 
+    # === Agent Logs ===
     def log(self, level, component, message, stack_trace=None):
         conn = self.get_connection()
-        conn.execute("INSERT INTO agent_logs (level, component, message, stack_trace) VALUES (?, ?, ?, ?)", (level, component, message, stack_trace))
+        conn.execute('''
+            INSERT INTO agent_logs (level, component, message, stack_trace)
+            VALUES (?, ?, ?, ?)
+        ''', (level, component, message, stack_trace))
         conn.commit()
         conn.close()
 
