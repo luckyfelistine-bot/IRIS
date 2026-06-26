@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRIS Voice — Hey IRIS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0f;
+            color: #e0e0ff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .voice-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            padding: 40px;
+        }
+        .iris-face {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #4a90d9, #1a5276);
+            position: relative;
+            box-shadow: 0 0 80px rgba(74, 144, 217, 0.4);
+            animation: face-pulse 3s ease-in-out infinite;
+        }
+        @keyframes face-pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 80px rgba(74, 144, 217, 0.4); }
+            50% { transform: scale(1.03); box-shadow: 0 0 100px rgba(74, 144, 217, 0.6); }
+        }
+        .eye {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 40%, #fff, #a8d8ea);
+            position: absolute;
+            top: 70px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+            animation: blink 4s infinite;
+        }
+        .eye.left { left: 50px; }
+        .eye.right { right: 50px; }
+        .pupil {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #0a0a0f;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .mouth {
+            width: 80px;
+            height: 15px;
+            border-radius: 0 0 40px 40px;
+            background: #0a0a0f;
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.3s;
+        }
+        .mouth.speaking {
+            height: 30px;
+            animation: mouth-speak 0.3s ease-in-out infinite alternate;
+        }
+        @keyframes mouth-speak {
+            from { height: 15px; }
+            to { height: 30px; }
+        }
+        @keyframes blink {
+            0%, 96%, 100% { transform: scaleY(1); }
+            98% { transform: scaleY(0.1); }
+        }
+        .status-text {
+            font-size: 24px;
+            font-weight: 300;
+            text-align: center;
+            min-height: 36px;
+        }
+        .status-text.listening { color: #4a90d9; }
+        .status-text.thinking { color: #9b59b6; }
+        .status-text.speaking { color: #2ecc71; }
+        .waveform {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            height: 50px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .waveform.active { opacity: 1; }
+        .wave-bar {
+            width: 5px;
+            background: linear-gradient(to top, #4a90d9, #9b59b6);
+            border-radius: 3px;
+            animation: wave 0.8s ease-in-out infinite;
+        }
+        .wave-bar:nth-child(1) { height: 20px; animation-delay: 0s; }
+        .wave-bar:nth-child(2) { height: 40px; animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { height: 30px; animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { height: 45px; animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { height: 25px; animation-delay: 0.4s; }
+        .wave-bar:nth-child(6) { height: 35px; animation-delay: 0.5s; }
+        .wave-bar:nth-child(7) { height: 20px; animation-delay: 0.6s; }
+        @keyframes wave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.6); }
+        }
+        .controls {
+            display: flex;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .control-btn {
+            padding: 14px 28px;
+            border-radius: 12px;
+            border: 1px solid rgba(74, 144, 217, 0.3);
+            background: rgba(74, 144, 217, 0.1);
+            color: #e0e0ff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .control-btn:hover {
+            background: rgba(74, 144, 217, 0.2);
+            border-color: #4a90d9;
+        }
+        .control-btn.primary {
+            background: linear-gradient(135deg, #4a90d9, #9b59b6);
+            border: none;
+            font-weight: 600;
+        }
+        .control-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74, 144, 217, 0.4);
+        }
+        .text-input-area {
+            width: 100%;
+            max-width: 500px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .text-input-area.active {
+            display: flex;
+        }
+        .text-input {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(74, 144, 217, 0.3);
+            border-radius: 12px;
+            color: #e0e0ff;
+            font-size: 16px;
+            outline: none;
+        }
+        .text-input:focus {
+            border-color: #4a90d9;
+            box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.2);
+        }
+        .response-area {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(74, 144, 217, 0.15);
+            border-radius: 16px;
+            margin-top: 20px;
+            display: none;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .response-area.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="voice-container">
+        <div class="iris-face" id="face">
+            <div class="eye left"><div class="pupil"></div></div>
+            <div class="eye right"><div class="pupil"></div></div>
+            <div class="mouth" id="mouth"></div>
+        </div>
+
+        <div class="status-text" id="status-text">Say "Hey IRIS" to activate</div>
+
+        <div class="waveform" id="waveform">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+        </div>
+
+        <div class="controls">
+            <button class="control-btn primary" id="mic-btn">Hold to Speak</button>
+            <button class="control-btn" id="keyboard-btn">Keyboard</button>
+            <button class="control-btn" id="camera-btn">Camera</button>
+        </div>
+
+        <div class="text-input-area" id="text-input-area">
+            <input type="text" class="text-input" id="text-input" placeholder="Type your message...">
+            <button class="control-btn primary" id="send-text-btn">Send</button>
+        </div>
+
+        <div class="response-area" id="response-area"></div>
+    </div>
+
+    <script>
+        const face = document.getElementById('face');
+        const mouth = document.getElementById('mouth');
+        const statusText = document.getElementById('status-text');
+        const waveform = document.getElementById('waveform');
+        const micBtn = document.getElementById('mic-btn');
+        const keyboardBtn = document.getElementById('keyboard-btn');
+        const cameraBtn = document.getElementById('camera-btn');
+        const textInputArea = document.getElementById('text-input-area');
+        const textInput = document.getElementById('text-input');
+        const sendTextBtn = document.getElementById('send-text-btn');
+        const responseArea = document.getElementById('response-area');
+
+        let isListening = false;
+        let recognition = null;
+
+        // Initialize speech recognition
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onstart = () => {
+                isListening = true;
+                statusText.textContent = 'Listening...';
+                statusText.className = 'status-text listening';
+                waveform.classList.add('active');
+                mouth.classList.add('speaking');
+                micBtn.textContent = 'Listening...';
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = Array.from(event.results)
+                    .map(result => result[0])
+                    .map(result => result.transcript)
+                    .join('');
+                statusText.textContent = `You: "${transcript}"`;
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                waveform.classList.remove('active');
+                mouth.classList.remove('speaking');
+                micBtn.textContent = 'Hold to Speak';
+
+                const transcript = Array.from(recognition.results)
+                    .map(result => result[0])
+                    .map(result => result.transcript)
+                    .join('');
+
+                if (transcript.trim()) {
+                    processInput(transcript);
+                } else {
+                    statusText.textContent = 'Say "Hey IRIS" to activate';
+                    statusText.className = 'status-text';
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                isListening = false;
+                waveform.classList.remove('active');
+                mouth.classList.remove('speaking');
+                micBtn.textContent = 'Hold to Speak';
+                statusText.textContent = 'Microphone error. Try again.';
+            };
+        }
+
+        // Mic button
+        micBtn.addEventListener('mousedown', startListening);
+        micBtn.addEventListener('mouseup', stopListening);
+        micBtn.addEventListener('mouseleave', stopListening);
+        micBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startListening(); });
+        micBtn.addEventListener('touchend', (e) => { e.preventDefault(); stopListening(); });
+
+        function startListening() {
+            if (recognition && !isListening) {
+                recognition.start();
+            }
+        }
+
+        function stopListening() {
+            if (recognition && isListening) {
+                recognition.stop();
+            }
+        }
+
+        // Keyboard toggle
+        keyboardBtn.addEventListener('click', () => {
+            textInputArea.classList.toggle('active');
+            if (textInputArea.classList.contains('active')) {
+                textInput.focus();
+            }
+        });
+
+        // Send text
+        sendTextBtn.addEventListener('click', () => {
+            const text = textInput.value.trim();
+            if (text) {
+                processInput(text);
+                textInput.value = '';
+            }
+        });
+
+        textInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                sendTextBtn.click();
+            }
+        });
+
+        // Camera toggle
+        cameraBtn.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                statusText.textContent = 'Camera active — analyzing...';
+                // In production: send frames to IRIS for analysis
+                setTimeout(() => {
+                    stream.getTracks().forEach(track => track.stop());
+                    statusText.textContent = 'Camera analysis complete';
+                }, 3000);
+            } catch (e) {
+                statusText.textContent = 'Camera access denied';
+            }
+        });
+
+        // Process input and get response
+        async function processInput(text) {
+            statusText.textContent = 'IRIS is thinking...';
+            statusText.className = 'status-text thinking';
+            waveform.classList.add('active');
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    statusText.textContent = 'IRIS';
+                    statusText.className = 'status-text speaking';
+                    responseArea.textContent = data.response;
+                    responseArea.classList.add('active');
+
+                    // Speak response
+                    speak(data.response);
+                } else {
+                    statusText.textContent = 'Error: ' + data.error;
+                }
+            } catch (e) {
+                statusText.textContent = 'Connection error';
+            }
+
+            waveform.classList.remove('active');
+        }
+
+        // Text-to-speech
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 1;
+                utterance.pitch = 1;
+                utterance.onstart = () => {
+                    mouth.classList.add('speaking');
+                };
+                utterance.onend = () => {
+                    mouth.classList.remove('speaking');
+                    statusText.textContent = 'Say "Hey IRIS" to activate';
+                    statusText.className = 'status-text';
+                };
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Wake word detection (simple)
+        if (recognition) {
+            const wakeRecognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            wakeRecognition.continuous = true;
+            wakeRecognition.interimResults = true;
+            wakeRecognition.lang = 'en-US';
+
+            wakeRecognition.onresult = (event) => {
+                const transcript = Array.from(event.results)
+                    .map(result => result[0])
+                    .map(result => result.transcript)
+                    .join('').toLowerCase();
+
+                if (transcript.includes('hey iris') || transcript.includes('hi iris') || transcript.includes('iris')) {
+                    wakeRecognition.stop();
+                    statusText.textContent = 'Hey sir! How can I help you?';
+                    statusText.className = 'status-text listening';
+                    // Auto-open mic
+                    setTimeout(() => {
+                        if (recognition && !isListening) {
+                            recognition.start();
+                        }
+                    }, 500);
+                }
+            };
+
+            wakeRecognition.onend = () => {
+                wakeRecognition.start();
+            };
+
+            // Start wake word listening
+            wakeRecognition.start();
+        }
+    </script>
+</body>
+</html>

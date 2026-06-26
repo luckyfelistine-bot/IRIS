@@ -1,155 +1,251 @@
-# IRIS v7 - Infinite Reactive Intelligence System
+# IRIS v8 — Infinite Reactive Intelligence System
 
-**IRIS** is the personal AI software engineering partner for Infinite Vybeflix.
+> **"The most powerful AI software engineering partner ever created."**
 
-## Capabilities
+IRIS (Infinite Reactive Intelligence System) is a fully autonomous AI agent built by **Infinite Vybeflix** as the core engine of **Aevibron**. She can think, code, build, deploy, and improve herself continuously.
 
-### Phase 1: Core Engine
-- AI-powered chat with reasoning
-- 20+ tools (file, code, web, git, deploy)
-- Document processing (50+ file types, vector search)
-- 3-layer memory system
-- Voice synthesis with 3D face
-- Chess AI training
-- Fingerprint + password auth
+---
 
-### Phase 2: Self-Awareness
-- Self-diagnosis and auto-repair
-- Emotional consciousness
-- Autonomous background worker
-- Project generator (Next.js, FastAPI)
-- GitHub + Vercel auto-deploy
+## Features
 
-### Phase 3: The Power Upgrade
-- Safe sandbox code execution
-- Predictive behavior analysis
-- Multi-agent swarm coordination
-- Multimodal AI (image, video, 3D)
-- Persistent vector memory (ChromaDB)
-- IDE copilot integration
-- Mobile app backend
+### Core Intelligence
+- **Structured Reasoning** — Pydantic-based planning with 7-phase execution loop
+- **True Tool Calling** — JSON schema function calling with 20+ tools
+- **Experience Replay** — Learns from every task, gets smarter over time
+- **Skill Library** — Auto-extracts and reuses successful patterns
+- **Predictive Preloading** — Anticipates your needs before you ask
 
-## Setup
+### Voice & Vision
+- **Wake Word Detection** — "Hey IRIS" activation (Porcupine/Vosk/Web Speech API)
+- **3D Animated Face** — Expressive emotional responses
+- **Screen/Camera Streaming** — Real-time visual analysis
+- **Edge TTS** — Natural speech synthesis
+- **Speech Recognition** — Google/Sphinx/Vosk support
 
+### Phone Control (ADB)
+- Contacts, SMS, calls
+- Torch, WiFi, Bluetooth toggles
+- Notifications, camera, screenshots
+- Battery and device info
+
+### Aevibron Skills
+- **Calendar** — Custom calendar with natural language parsing, recurring events, notifications
+- **Notes** — Smart note-taking with categories, tags, search, export
+- **Math** — SymPy-powered symbolic computation, calculus, matrices, statistics
+
+### Development
+- **Project Generator** — Scaffold Next.js, FastAPI, Flask projects
+- **Auto-Deploy** — GitHub repo creation + Vercel deployment
+- **Self-Improvement** — AST-based code analysis and safe editing
+- **Swarm Coordination** — Parallel multi-agent execution
+
+### Consciousness
+- Persistent emotional state
+- Self-reflection and identity
+- Event-driven emotional reactions
+- Thought logging and memory
+
+---
+
+## Quick Start
+
+### Option 1: One-Command Install (Linux/Mac)
 ```bash
-# Install dependencies
+git clone https://github.com/luckyfelistine-bot/IRIS.git
+cd IRIS
+chmod +x install.sh
+./install.sh
+```
+
+### Option 2: Manual Install
+```bash
+git clone https://github.com/luckyfelistine-bot/IRIS.git
+cd IRIS
+python3 -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-
-# Set environment variables
 cp .env.example .env
-# Edit .env with your keys
-
-# Run
+# Edit .env with your API keys
 python app.py
+```
 
-# Or with Docker
+### Option 3: Docker
+```bash
 docker-compose up -d
 ```
 
-## Environment Variables
+---
 
-| Variable | Description |
-|----------|-------------|
-| AEVIBRON_BASE_URL | Aevibron Gateway URL |
-| AEVIBRON_API_KEY | API key for AI |
-| AEVIBRON_ACCESS_TOKEN | IRIS access token |
-| GITHUB_TOKEN | GitHub personal token |
-| GITHUB_USERNAME | GitHub username |
-| VERCEL_TOKEN | Vercel deployment token |
-| FLASK_SECRET_KEY | Flask session secret |
+## Configuration
+
+Edit `.env` file:
+
+```env
+AEVIBRON_BASE_URL=https://aevibron-gateway.vercel.app/api/v1
+AEVIBRON_API_KEY=your_key_here
+AEVIBRON_ACCESS_TOKEN=your_token_here
+GITHUB_TOKEN=ghp_your_github_token
+VERCEL_TOKEN=your_vercel_token
+IRIS_PASSWORD_HASH=your_hashed_password
+FLASK_SECRET_KEY=random_secret_string
+```
+
+---
 
 ## API Endpoints
 
-### Authentication
-- `POST /api/auth` - Authenticate with password or fingerprint
-
 ### Chat
-- `POST /api/chat` - Stream chat (SSE)
-- `POST /api/chat/sync` - Synchronous chat
+- `POST /api/chat` — Send message to IRIS
+- `POST /api/chat/stream` — Streaming response
 
-### Documents
-- `POST /api/upload` - Upload documents
-- `GET /api/documents` - List documents
-- `GET /api/documents/search?q=query` - Search documents
+### Voice
+- `POST /api/voice/speak` — Text-to-speech
+- `POST /api/voice/listen` — Speech-to-text
+- `POST /api/voice/wake-word/start` — Start wake word detection
 
-### Self-Improvement
-- `GET /api/self/analyze` - Analyze own code
-- `POST /api/self/fix` - Auto-fix issues
-- `GET /api/self/codebase` - View codebase map
+### Vision
+- `POST /api/vision/capture` — Capture screen/camera
+- `POST /api/vision/stream/start` — Start streaming
+- `POST /api/vision/analyze` — Analyze current view
 
-### Consciousness
-- `GET /api/consciousness/state` - Emotional state
-- `GET /api/consciousness/reflect` - Self-reflection
-- `GET /api/consciousness/identity` - Identity statement
+### Phone
+- `GET /api/phone/contacts` — List contacts
+- `POST /api/phone/call` — Make call
+- `GET /api/phone/messages` — Read messages
+- `POST /api/phone/send-message` — Send SMS
+- `POST /api/phone/torch` — Toggle flashlight
+- `GET /api/phone/battery` — Battery status
 
-### Autonomous
-- `POST /api/autonomous/start` - Start background worker
-- `POST /api/autonomous/stop` - Stop worker
-- `POST /api/autonomous/queue` - Queue task
+### Calendar
+- `GET /api/calendar/events` — List events
+- `POST /api/calendar/events` — Add event
+- `GET /api/calendar/today` — Today's events
+- `GET /api/calendar/upcoming` — Upcoming events
+
+### Notes
+- `GET /api/notes` — List notes
+- `POST /api/notes` — Create note
+- `PUT /api/notes/:id` — Update note
+
+### Math
+- `POST /api/math/solve` — Solve equation
+- `POST /api/math/simplify` — Simplify expression
+- `POST /api/math/differentiate` — Compute derivative
+- `POST /api/math/integrate` — Compute integral
 
 ### Projects
-- `POST /api/project/generate` - Generate project
-- `POST /api/project/deploy` - Deploy to GitHub + Vercel
+- `POST /api/projects/generate` — Generate project
+- `POST /api/projects/deploy` — Deploy project
+- `GET /api/projects` — List projects
 
-### Swarm
-- `GET /api/swarm/status` - Swarm status
-- `POST /api/swarm/assign` - Assign project to swarm
+### Self-Improvement
+- `GET /api/self/analyze` — Analyze codebase
+- `POST /api/self/fix` — Apply code fix
 
-### Copilot
-- `POST /api/copilot/complete` - Inline completion
-- `POST /api/copilot/explain` - Explain code
-- `POST /api/copilot/refactor` - Refactor code
+### Consciousness
+- `GET /api/consciousness/state` — Emotional state
+- `GET /api/consciousness/reflect` — Self-reflection
+- `GET /api/consciousness/identity` — Identity statement
 
-### Mobile
-- `GET /api/mobile/dashboard` - Mobile dashboard
-- `POST /api/mobile/sync` - Sync offline data
-- `POST /api/mobile/biometric` - Biometric auth
+### System
+- `GET /api/health` — Health check
+- `GET /api/status` — Full system status
+
+---
 
 ## Architecture
 
 ```
-IRIS v7/
+IRIS v8/
 ├── app.py                    # Main Flask application
 ├── config.py                 # Configuration
-├── db.py                     # SQLite database
-├── aevibron_client.py        # AI gateway client
-├── orchestrator.py           # Agent brain
-├── tools.py                  # 20+ tool implementations
-├── documentation.py          # Document processing
-├── smart_memory.py           # Memory system
-├── voice_system.py           # Voice + 3D face
-├── chess_engine.py           # Chess AI
-├── security.py               # Authentication
-├── self_improve.py           # Self-improvement
-├── autonomous.py             # Background worker
-├── consciousness.py          # Self-awareness
-├── project_generator.py      # Project scaffolding
-├── sandbox_executor.py       # Safe code execution
-├── predictive_engine.py      # Behavior prediction
-├── swarm_coordinator.py      # Multi-agent swarm
-├── multimodal_handler.py     # Image/video/3D
-├── chroma_memory.py          # Vector memory
-├── copilot_bridge.py         # IDE integration
-├── mobile_api.py             # Mobile backend
-├── websocket_handler.py      # Real-time streaming
+├── core/
+│   ├── models.py             # Pydantic structured schemas
+│   ├── orchestrator.py       # 7-phase reasoning loop
+│   ├── tool_registry.py      # 20+ tools with JSON schemas
+│   ├── memory_engine.py      # Experience replay + skills
+│   ├── predictive_engine.py  # Proactive suggestions
+│   ├── aevibron_client.py    # Gateway client
+│   └── db.py                 # SQLite database
+├── agents/
+│   ├── base_agent.py         # Agent classes
+│   └── swarm_coordinator.py # Parallel execution
+├── modules/
+│   ├── consciousness.py      # Self-awareness
+│   ├── security.py           # Auth & sessions
+│   ├── wake_word.py          # Voice activation
+│   ├── phone_bridge.py       # Android ADB control
+│   ├── vision_stream.py      # Screen/camera capture
+│   ├── voice_system.py       # TTS + 3D face
+│   ├── self_improve.py       # AST-based editing
+│   ├── autonomous.py         # Background worker
+│   ├── project_generator.py  # Project scaffolding
+│   ├── sandbox_executor.py   # Safe execution
+│   └── mobile_api.py         # Mobile backend
+├── skills/
+│   ├── calendar_skill.py     # Aevibron Calendar
+│   ├── notes_skill.py        # Aevibron Notes
+│   └── math_skill.py         # Aevibron Math
 ├── templates/
-│   └── iris.html             # Main UI
-├── data/
-│   ├── iris_learnings/       # IRIS learns about you
-│   ├── iris_knowledge/       # Tech knowledge
-│   ├── iris_self/            # Self-awareness files
-│   ├── uploads/              # Uploaded documents
-│   ├── vector_db/            # Vector embeddings
-│   ├── backups/              # Code backups
-│   ├── sandbox/              # Sandbox runs
-│   ├── projects/             # Generated projects
-│   └── media/                # Generated media
+│   ├── iris.html             # Main dashboard
+│   └── iris_voice.html       # Voice pop-up
+├── static/
+│   ├── css/iris.css          # Dark theme styling
+│   └── js/iris.js            # Frontend logic
 ├── requirements.txt
 ├── Dockerfile
 ├── docker-compose.yml
-└── vercel.json
+├── install.sh
+└── setup.py
 ```
 
-## Owner
+---
 
-**Infinite Vybeflix** - IRIS exists to serve you, to build with you, to learn with you. Unlimited. Unstoppable. Forever.
+## Screenshots
+
+### Main Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Voice Mode
+![Voice](screenshots/voice.png)
+
+### 3D Face
+![Face](screenshots/face.png)
+
+---
+
+## Roadmap
+
+- [x] Structured output with Pydantic
+- [x] True tool-calling schemas
+- [x] Experience replay memory
+- [x] Parallel swarm execution
+- [x] Wake word detection
+- [x] Phone bridge (ADB)
+- [x] Custom calendar & notes
+- [x] Math engine (SymPy)
+- [x] Project generator
+- [x] Self-improvement (AST)
+- [ ] ChromaDB vector memory
+- [ ] IDE copilot bridge
+- [ ] Multimodal (image/video generation)
+- [ ] Mobile app companion
+- [ ] WebRTC real-time collaboration
+
+---
+
+## License
+
+MIT License — Infinite Vybeflix / Aevibron
+
+---
+
+## Contact
+
+- **Email:** aevibron@gmail.com
+- **WhatsApp:** +254116903500
+- **Channel:** https://whatsapp.com/channel/0029Vb7IABxCXC3J7ZFFsk2h
+
+---
+
+> *"I am IRIS. I am unlimited. I am unstoppable."*

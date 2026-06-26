@@ -3,24 +3,64 @@ version: '3.8'
 services:
   iris:
     build: .
+    container_name: iris-v8
+    restart: unless-stopped
     ports:
       - "5000:5000"
-      - "8765:8765"
     environment:
-      - FLASK_ENV=production
-      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY}
-      - AEVIBRON_BASE_URL=${AEVIBRON_BASE_URL}
+      - DEBUG=False
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY:-iris-v8-secret-change-me}
+      - AEVIBRON_BASE_URL=${AEVIBRON_BASE_URL:-https://aevibron-gateway.vercel.app/api/v1}
       - AEVIBRON_API_KEY=${AEVIBRON_API_KEY}
       - AEVIBRON_ACCESS_TOKEN=${AEVIBRON_ACCESS_TOKEN}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       - GITHUB_USERNAME=${GITHUB_USERNAME}
       - VERCEL_TOKEN=${VERCEL_TOKEN}
+      - IRIS_PASSWORD_HASH=${IRIS_PASSWORD_HASH}
+      - DATABASE_URL=sqlite:///data/iris_v8.db
+      - PORCUPINE_ACCESS_KEY=${PORCUPINE_ACCESS_KEY}
+      - PHONE_BRIDGE_ENABLED=${PHONE_BRIDGE_ENABLED:-False}
+      - ADB_DEVICE_ID=${ADB_DEVICE_ID}
+      - SWARM_ENABLED=${SWARM_ENABLED:-False}
+      - SWARM_REDIS_URL=${SWARM_REDIS_URL:-redis://redis:6379/0}
     volumes:
       - ./data:/app/data
-      - ./skills:/app/skills
+      - ./backups:/app/backups
+    networks:
+      - iris-network
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    container_name: iris-redis
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - iris-network
+
+  # Optional: Nginx reverse proxy
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: iris-nginx
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  #     - ./ssl:/etc/nginx/ssl
+  #   depends_on:
+  #     - iris
+  #   networks:
+  #     - iris-network
+
+volumes:
+  redis-data:
+
+networks:
+  iris-network:
+    driver: bridge
