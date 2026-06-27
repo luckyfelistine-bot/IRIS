@@ -1,11 +1,12 @@
 """IRIS v9 Main Application — Modular Blueprint Architecture
 Jarvis Edition: Vercel-ready, Postgres-backed, Proactive AI
+3D Face Support: Mixamo FBX with Three.js
 """
 import os
 import sys
 import logging
 from datetime import datetime
-from flask import Flask, request, jsonify, render_template, session, Response, stream_with_context, g
+from flask import Flask, request, jsonify, render_template, session, Response, stream_with_context, g, send_from_directory
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -104,8 +105,24 @@ def voice_page():
 
 @app.route('/face')
 def face_page():
-    """Serve the standalone 3D face for iframe embedding."""
+    """Serve 3D face if FBX exists, otherwise fallback to 2D face."""
+    fbx_path = os.path.join(app.static_folder, '3d', 'IRIS.fbx')
+    if os.path.exists(fbx_path):
+        logger.info("🎭 Serving 3D face (Mixamo model found)")
+        return render_template('iris_face_3d.html')
+    else:
+        logger.info("🎨 Serving 2D face (no 3D model found)")
+        return render_template('iris_face.html')
+
+@app.route('/face/2d')
+def face_2d():
+    """Force 2D face."""
     return render_template('iris_face.html')
+
+@app.route('/face/3d')
+def face_3d():
+    """Force 3D face (shows error if no model)."""
+    return render_template('iris_face_3d.html')
 
 # ═══════════════════════════════════════════════════════════════
 # MAIN
