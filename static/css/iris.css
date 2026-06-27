@@ -1,3 +1,26 @@
+/* === LOCAL FONTS === */
+@font-face {
+  font-family: 'Inter';
+  src: url('../fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../fonts/Inter-Italic-VariableFont_opsz,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Fira Code';
+  src: url('../fonts/Fira_Code/FiraCode-VariableFont_wght.ttf') format('truetype');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* IRIS v8 Dashboard Styles */
 :root {
     --bg-primary: #0a0a0f;
@@ -17,7 +40,7 @@
     --radius: 12px;
     --radius-sm: 8px;
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    --font-mono: 'Fira Code', 'JetBrains Mono', monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -734,4 +757,12 @@ body {
     .nav-item { justify-content: center; padding: 12px; }
     .sidebar-footer { display: none; }
     .section { padding: 16px; }
+}
+
+.logo-img {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  box-shadow: 0 0 20px var(--accent-glow);
 }

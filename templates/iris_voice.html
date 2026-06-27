@@ -221,8 +221,7 @@
         .wake-dot {
             width: 7px;
             height: 7px;
-            border-radius: 50%;
-            background: #555;
+            border-radius: 50%;            background: #555;
             transition: background 0.3s;
         }
         .wake-indicator.active .wake-dot {
@@ -245,9 +244,17 @@
             color: #6a7bb8;
             z-index: 100;
         }
-    </style>
+    </style>D
 <base target="_blank">
 </head>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/favicon-96x96.png') }}" sizes="96x96">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/favicon.svg') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='icons/favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='icons/site.webmanifest') }}">
+    <meta name="apple-mobile-web-app-title" content="IRIS">
+    <meta name="theme-color" content="#0a0a0f">
+    </head>
 <body>
     <div class="model-badge" id="model-badge">Loading face...</div>
     <div class="wake-indicator" id="wake-indicator">
@@ -654,3 +661,4 @@
     </script>
 </body>
 </html>
+

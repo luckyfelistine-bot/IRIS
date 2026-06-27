@@ -6,13 +6,20 @@
     <title>IRIS v8 — Infinite Reactive Intelligence System</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/iris.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-</head>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/favicon-96x96.png') }}" sizes="96x96">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/favicon.svg') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='icons/favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='icons/site.webmanifest') }}">
+    <meta name="apple-mobile-web-app-title" content="IRIS">
+    <meta name="theme-color" content="#0a0a0f">
+    </head>
 <body>
     <div class="app">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo">
-                <div class="logo-icon">I</div>
+                <img src="{{ url_for('static', filename='iris-logo.png') }}" alt="IRIS" class="logo-img">
                 <span>IRIS</span>
             </div>
             <nav class="nav">
