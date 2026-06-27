@@ -21,34 +21,60 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 30px;
-            padding: 40px;
+            gap: 25px;
+            padding: 30px;
             width: 100%;
-            max-width: 600px;
+            max-width: 700px;
         }
-
-        /* Face iframe */
         .face-wrapper {
-            width: 320px;
-            height: 320px;
+            width: 300px;
+            height: 300px;
             border-radius: 50%;
             overflow: hidden;
             border: 2px solid rgba(74, 144, 217, 0.2);
             box-shadow: 0 0 60px rgba(74, 144, 217, 0.15);
             background: #0a0a0f;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+        .face-wrapper.has-3d {
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
         }
         .face-wrapper iframe {
             width: 100%;
             height: 100%;
             border: none;
         }
-
-        /* Status */
+        .face-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(74, 144, 217, 0.3);
+            background: rgba(10, 10, 15, 0.8);
+            color: #8a9bb8;
+            font-size: 12px;
+            cursor: pointer;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .face-wrapper:hover .face-toggle {
+            opacity: 1;
+        }
+        .face-toggle:hover {
+            background: rgba(74, 144, 217, 0.2);
+            color: #e0e0ff;
+        }
         .status-text {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 300;
             text-align: center;
-            min-height: 36px;
+            min-height: 32px;
             color: #8a9bb8;
             transition: color 0.3s;
         }
@@ -56,60 +82,55 @@
         .status-text.thinking { color: #b86af0; }
         .status-text.speaking { color: #4a90d9; }
         .status-text.wake { color: #f0c040; animation: pulse 1s ease-in-out infinite; }
-
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
-
-        /* Waveform */
         .waveform {
             display: flex;
             gap: 4px;
             align-items: center;
-            height: 50px;
+            height: 45px;
             opacity: 0;
             transition: opacity 0.3s;
         }
         .waveform.active { opacity: 1; }
         .wave-bar {
-            width: 5px;
+            width: 4px;
             background: linear-gradient(to top, #4a90d9, #b86af0);
             border-radius: 3px;
             animation: wave 0.8s ease-in-out infinite;
         }
-        .wave-bar:nth-child(1) { height: 20px; animation-delay: 0s; }
-        .wave-bar:nth-child(2) { height: 40px; animation-delay: 0.1s; }
-        .wave-bar:nth-child(3) { height: 30px; animation-delay: 0.2s; }
-        .wave-bar:nth-child(4) { height: 45px; animation-delay: 0.3s; }
-        .wave-bar:nth-child(5) { height: 25px; animation-delay: 0.4s; }
-        .wave-bar:nth-child(6) { height: 35px; animation-delay: 0.5s; }
-        .wave-bar:nth-child(7) { height: 20px; animation-delay: 0.6s; }
+        .wave-bar:nth-child(1) { height: 18px; animation-delay: 0s; }
+        .wave-bar:nth-child(2) { height: 35px; animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { height: 25px; animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { height: 40px; animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { height: 22px; animation-delay: 0.4s; }
+        .wave-bar:nth-child(6) { height: 32px; animation-delay: 0.5s; }
+        .wave-bar:nth-child(7) { height: 18px; animation-delay: 0.6s; }
         @keyframes wave {
             0%, 100% { transform: scaleY(1); }
             50% { transform: scaleY(1.6); }
         }
-
-        /* Controls */
         .controls {
             display: flex;
-            gap: 16px;
-            margin-top: 10px;
+            gap: 12px;
+            margin-top: 8px;
             flex-wrap: wrap;
             justify-content: center;
         }
         .control-btn {
-            padding: 14px 28px;
-            border-radius: 12px;
+            padding: 12px 22px;
+            border-radius: 10px;
             border: 1px solid rgba(74, 144, 217, 0.3);
             background: rgba(74, 144, 217, 0.08);
             color: #e0e0ff;
-            font-size: 16px;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         .control-btn:hover {
             background: rgba(74, 144, 217, 0.15);
@@ -131,15 +152,13 @@
         }
         @keyframes record-pulse {
             0%, 100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
-            50% { box-shadow: 0 0 0 15px rgba(231, 76, 60, 0); }
+            50% { box-shadow: 0 0 0 12px rgba(231, 76, 60, 0); }
         }
-
-        /* Text input */
         .text-input-area {
             width: 100%;
             display: none;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             animation: slideUp 0.3s ease;
         }
         .text-input-area.active { display: flex; }
@@ -149,53 +168,50 @@
         }
         .text-input {
             width: 100%;
-            padding: 16px 20px;
+            padding: 14px 18px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(74, 144, 217, 0.3);
-            border-radius: 12px;
+            border-radius: 10px;
             color: #e0e0ff;
-            font-size: 16px;
+            font-size: 15px;
             outline: none;
         }
         .text-input:focus {
             border-color: #4a90d9;
             box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.2);
         }
-
-        /* Response area */
         .response-area {
             width: 100%;
-            padding: 20px;
+            padding: 18px;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(74, 144, 217, 0.15);
-            border-radius: 16px;
+            border-radius: 14px;
             display: none;
-            font-size: 16px;
+            font-size: 15px;
             line-height: 1.6;
-            max-height: 200px;
+            max-height: 180px;
             overflow-y: auto;
         }
         .response-area.active { display: block; }
-        .response-area::-webkit-scrollbar { width: 6px; }
+        .response-area::-webkit-scrollbar { width: 5px; }
         .response-area::-webkit-scrollbar-thumb {
             background: rgba(74, 144, 217, 0.3);
             border-radius: 3px;
         }
-
-        /* Wake word indicator */
         .wake-indicator {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 8px 16px;
+            top: 16px;
+            right: 16px;
+            padding: 6px 14px;
             border-radius: 20px;
             background: rgba(74, 144, 217, 0.1);
             border: 1px solid rgba(74, 144, 217, 0.2);
-            font-size: 13px;
+            font-size: 12px;
             color: #8a9bb8;
             display: flex;
             align-items: center;
             gap: 8px;
+            z-index: 100;
         }
         .wake-indicator.active {
             background: rgba(74, 217, 144, 0.15);
@@ -203,8 +219,8 @@
             color: #4ad990;
         }
         .wake-dot {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background: #555;
             transition: background 0.3s;
@@ -217,50 +233,56 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.3; }
         }
+        .model-badge {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            background: rgba(74, 144, 217, 0.1);
+            border: 1px solid rgba(74, 144, 217, 0.2);
+            font-size: 11px;
+            color: #6a7bb8;
+            z-index: 100;
+        }
     </style>
+<base target="_blank">
 </head>
 <body>
+    <div class="model-badge" id="model-badge">Loading face...</div>
     <div class="wake-indicator" id="wake-indicator">
         <div class="wake-dot"></div>
         <span id="wake-text">Wake word: OFF</span>
     </div>
-
     <div class="voice-container">
-        <!-- 3D Face -->
-        <div class="face-wrapper">
+        <div class="face-wrapper" id="face-wrapper">
+            <button class="face-toggle" id="face-toggle" title="Toggle 2D/3D">🎭 2D</button>
             <iframe src="/face" id="face-frame" title="IRIS Face"></iframe>
         </div>
-
         <div class="status-text" id="status-text">Say "Hey IRIS" to activate</div>
-
         <div class="waveform" id="waveform">
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
             <div class="wave-bar"></div>
         </div>
-
         <div class="controls">
             <button class="control-btn primary" id="mic-btn">🎤 Hold to Speak</button>
             <button class="control-btn" id="keyboard-btn">⌨️ Keyboard</button>
             <button class="control-btn" id="camera-btn">📷 Camera</button>
             <button class="control-btn" id="wake-toggle-btn">👂 Wake Word</button>
         </div>
-
         <div class="text-input-area" id="text-input-area">
             <input type="text" class="text-input" id="text-input" placeholder="Type your message...">
             <button class="control-btn primary" id="send-text-btn">Send</button>
         </div>
-
         <div class="response-area" id="response-area"></div>
     </div>
-
     <script>
-        // ─── DOM Elements ───
+
+        const faceWrapper = document.getElementById('face-wrapper');
         const faceFrame = document.getElementById('face-frame');
+        const faceToggle = document.getElementById('face-toggle');
+        const modelBadge = document.getElementById('model-badge');
         const statusText = document.getElementById('status-text');
         const waveform = document.getElementById('waveform');
         const micBtn = document.getElementById('mic-btn');
@@ -274,32 +296,55 @@
         const wakeIndicator = document.getElementById('wake-indicator');
         const wakeText = document.getElementById('wake-text');
 
-        // ─── State ───
         let isListening = false;
         let isSpeaking = false;
         let wakeWordEnabled = false;
         let recognition = null;
         let wakeRecognition = null;
         let silenceTimer = null;
-        const SILENCE_TIMEOUT = 3000; // Stop listening after 3s silence
+        let is3D = false;
 
-        // ─── Face Communication ───
+        function detectFaceType() {
+            setTimeout(() => {
+                try {
+                    const frameDoc = faceFrame.contentDocument || faceFrame.contentWindow.document;
+                    const title = frameDoc.title;
+                    is3D = title.includes('3D');
+                    if (is3D) {
+                        faceWrapper.classList.add('has-3d');
+                        faceToggle.textContent = '🎭 3D';
+                        modelBadge.textContent = 'IRIS 3D — Mixamo Model';
+                    } else {
+                        modelBadge.textContent = 'IRIS 2D — CSS Face';
+                    }
+                } catch (e) {
+                    modelBadge.textContent = 'IRIS Face';
+                }
+            }, 1500);
+        }
+        detectFaceType();
+
+        faceToggle.addEventListener('click', () => {
+            is3D = !is3D;
+            faceFrame.src = is3D ? '/face/3d' : '/face/2d';
+            faceToggle.textContent = is3D ? '🎭 3D' : '🎭 2D';
+            faceWrapper.classList.toggle('has-3d', is3D);
+            modelBadge.textContent = is3D ? 'IRIS 3D — Mixamo Model' : 'IRIS 2D — CSS Face';
+        });
+
         function sendToFace(type, value) {
             if (faceFrame.contentWindow) {
                 faceFrame.contentWindow.postMessage({ type, value }, '*');
             }
         }
 
-        // ─── Initialize Speech Recognition ───
         function initSpeechRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
-                statusText.textContent = 'Speech recognition not supported in this browser';
+                statusText.textContent = 'Speech recognition not supported';
                 micBtn.disabled = true;
                 return false;
             }
-
-            // Main recognition (for user commands)
             recognition = new SpeechRecognition();
             recognition.continuous = true;
             recognition.interimResults = true;
@@ -320,10 +365,7 @@
                 const results = Array.from(event.results);
                 const transcript = results.map(r => r[0].transcript).join('');
                 const isFinal = results[results.length - 1].isFinal;
-
-                statusText.textContent = `You: "${transcript}"`;
-
-                // Reset silence timer
+                statusText.textContent = 'You: "' + transcript + '"';
                 clearTimeout(silenceTimer);
                 if (isFinal) {
                     silenceTimer = setTimeout(() => {
@@ -335,7 +377,6 @@
 
             recognition.onend = () => {
                 if (isListening) {
-                    // Restart if still supposed to be listening
                     try { recognition.start(); } catch(e) {}
                 }
             };
@@ -352,7 +393,6 @@
                 stopListening();
             };
 
-            // Wake word recognition (always-on background)
             wakeRecognition = new SpeechRecognition();
             wakeRecognition.continuous = true;
             wakeRecognition.interimResults = true;
@@ -363,11 +403,8 @@
                     .map(r => r[0].transcript)
                     .join('')
                     .toLowerCase();
-
-                // Wake word detection
                 if (transcript.includes('hey iris') || transcript.includes('hi iris') ||
                     transcript.includes('hey eyes') || transcript.includes('iris')) {
-
                     wakeRecognition.stop();
                     onWakeWordDetected();
                 }
@@ -392,20 +429,13 @@
             return true;
         }
 
-        // ─── Wake Word Handler ───
         function onWakeWordDetected() {
             statusText.textContent = 'Hey sir! How can I help you?';
             statusText.className = 'status-text wake';
             sendToFace('expression', 'happy');
             sendToFace('status', 'Hey sir!');
-
-            // Play subtle chime
             playChime();
-
-            // Auto-start listening for command
-            setTimeout(() => {
-                startListening();
-            }, 800);
+            setTimeout(() => startListening(), 800);
         }
 
         function playChime() {
@@ -424,16 +454,11 @@
             } catch(e) {}
         }
 
-        // ─── Listening Control ───
         function startListening() {
             if (!recognition) {
                 if (!initSpeechRecognition()) return;
             }
-            try {
-                recognition.start();
-            } catch(e) {
-                console.log('Recognition already started');
-            }
+            try { recognition.start(); } catch(e) {}
         }
 
         function stopListening() {
@@ -448,14 +473,12 @@
             sendToFace('listening', false);
         }
 
-        // ─── Mic Button ───
         micBtn.addEventListener('mousedown', startListening);
         micBtn.addEventListener('mouseup', stopListening);
         micBtn.addEventListener('mouseleave', stopListening);
         micBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startListening(); });
         micBtn.addEventListener('touchend', (e) => { e.preventDefault(); stopListening(); });
 
-        // ─── Wake Word Toggle ───
         wakeToggleBtn.addEventListener('click', () => {
             wakeWordEnabled = !wakeWordEnabled;
             if (wakeWordEnabled) {
@@ -480,7 +503,6 @@
             }
         });
 
-        // ─── Keyboard Toggle ───
         keyboardBtn.addEventListener('click', () => {
             textInputArea.classList.toggle('active');
             if (textInputArea.classList.contains('active')) {
@@ -491,7 +513,6 @@
             }
         });
 
-        // ─── Send Text ───
         sendTextBtn.addEventListener('click', () => {
             const text = textInput.value.trim();
             if (text) {
@@ -499,33 +520,25 @@
                 textInput.value = '';
             }
         });
-
         textInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') sendTextBtn.click();
         });
 
-        // ─── Camera ───
         cameraBtn.addEventListener('click', async () => {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                 statusText.textContent = '📷 Camera active — analyzing...';
                 sendToFace('expression', 'thinking');
-
-                // Capture frame and send to IRIS
                 const video = document.createElement('video');
                 video.srcObject = stream;
                 await video.play();
-
                 setTimeout(async () => {
                     const canvas = document.createElement('canvas');
                     canvas.width = video.videoWidth;
                     canvas.height = video.videoHeight;
                     canvas.getContext('2d').drawImage(video, 0, 0);
                     const base64 = canvas.toDataURL('image/jpeg').split(',')[1];
-
                     stream.getTracks().forEach(t => t.stop());
-
-                    // Send to vision API
                     const response = await fetch('/api/intelligence/vision/analyze', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -535,7 +548,6 @@
                         })
                     });
                     const data = await response.json();
-
                     if (data.success) {
                         responseArea.textContent = data.analysis;
                         responseArea.classList.add('active');
@@ -547,14 +559,12 @@
             }
         });
 
-        // ─── Process Input & Get Response ───
         async function processInput(text) {
             statusText.textContent = 'IRIS is thinking...';
             statusText.className = 'status-text thinking';
             waveform.classList.add('active');
             sendToFace('expression', 'thinking');
             sendToFace('status', 'Thinking...');
-
             try {
                 const response = await fetch('/api/chat', {
                     method: 'POST',
@@ -562,9 +572,7 @@
                     body: JSON.stringify({ message: text })
                 });
                 const data = await response.json();
-
                 waveform.classList.remove('active');
-
                 if (data.success) {
                     statusText.textContent = 'IRIS';
                     statusText.className = 'status-text speaking';
@@ -585,26 +593,19 @@
             }
         }
 
-        // ─── Text-to-Speech with Lip Sync ───
         function speak(text) {
             if (!('speechSynthesis' in window)) return;
-
-            // Cancel any ongoing speech
             window.speechSynthesis.cancel();
-
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.rate = 1;
             utterance.pitch = 1;
             utterance.volume = 1;
-
-            // Try to use a good voice
             const voices = window.speechSynthesis.getVoices();
             const preferredVoice = voices.find(v => v.name.includes('Google US English'))
                 || voices.find(v => v.name.includes('Samantha'))
                 || voices.find(v => v.lang === 'en-US');
             if (preferredVoice) utterance.voice = preferredVoice;
 
-            // Lip sync
             utterance.onstart = () => {
                 isSpeaking = true;
                 sendToFace('speaking', true);
@@ -612,41 +613,26 @@
                 statusText.textContent = 'IRIS is speaking...';
                 statusText.className = 'status-text speaking';
             };
-
             utterance.onend = () => {
                 isSpeaking = false;
                 sendToFace('speaking', false);
                 sendToFace('expression', 'neutral');
                 statusText.textContent = wakeWordEnabled ? 'Listening for "Hey IRIS"...' : 'Say "Hey IRIS" to activate';
                 statusText.className = 'status-text';
-
-                // Restart wake word if enabled
                 if (wakeWordEnabled && wakeRecognition) {
                     setTimeout(() => {
                         try { wakeRecognition.start(); } catch(e) {}
                     }, 500);
                 }
             };
-
-            utterance.onboundary = (event) => {
-                // Could be used for more precise lip sync
-            };
-
             window.speechSynthesis.speak(utterance);
         }
 
-        // ─── Keyboard Shortcuts ───
         document.addEventListener('keydown', (e) => {
-            // Space to toggle mic (when not typing)
             if (e.code === 'Space' && document.activeElement !== textInput) {
                 e.preventDefault();
-                if (isListening) {
-                    stopListening();
-                } else {
-                    startListening();
-                }
+                isListening ? stopListening() : startListening();
             }
-            // Escape to stop everything
             if (e.code === 'Escape') {
                 stopListening();
                 window.speechSynthesis.cancel();
@@ -655,12 +641,10 @@
             }
         });
 
-        // ─── Initialize ───
         initSpeechRecognition();
         statusText.textContent = 'Say "Hey IRIS" to activate';
         sendToFace('status', 'IRIS');
 
-        // Load voices
         window.speechSynthesis.getVoices();
         if (window.speechSynthesis.onvoiceschanged !== undefined) {
             window.speechSynthesis.onvoiceschanged = () => {
